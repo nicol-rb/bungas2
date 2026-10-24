@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nosso Chat Privado 💬</title>
+  <style>
+    body { font-family: sans-serif; background: #1e1e2e; color: #fff; margin: 0; padding: 20px; display: flex; flex-direction: column; height: 90vh; }
+    #chat-box { flex: 1; overflow-y: auto; background: #2b2b3b; padding: 15px; border-radius: 8px; margin-bottom: 10px; }
+    .msg { margin-bottom: 10px; padding: 8px 12px; background: #3b3b4f; border-radius: 6px; width: fit-content; max-width: 80%; }
+    .msg span { font-weight: bold; color: #89b4fa; }
+    form { display: flex; gap: 10px; }
+    input[type="text"] { flex: 1; padding: 12px; border: none; border-radius: 6px; outline: none; }
+    button { padding: 12px 20px; background: #89b4fa; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: #1e1e2e; }
+  </style>
+</head>
+<body>
+
+  <h2>Private Chat 💬</h2>
+  <div id="chat-box"></div>
+
+  <form id="chat-form">
+    <input id="name" type="text" placeholder="Seu nome" style="width: 100px;" required />
+    <input id="message" type="text" placeholder="Digite uma mensagem..." autocomplete="off" required />
+    <button type="submit">Enviar</button>
+  </form>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const form = document.getElementById("chat-form");
+    const nameInput = document.getElementById("name");
+    const messageInput = document.getElementById("message");
+    const chatBox = document.getElementById("chat-box");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (messageInput.value) {
+        socket.emit("chat message", {
+          user: nameInput.value,
+          text: messageInput.value
+        });
+        messageInput.value = "";
+      }
+    });
+
+    socket.on("chat message", (data) => {
+      const item = document.createElement("div");
+      item.classList.add("msg");
+      item.innerHTML = `<span>${data.user}:</span> ${data.text}`;
+      chatBox.appendChild(item);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
+  </script>
+</body>
+</html>
