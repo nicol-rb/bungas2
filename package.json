@@ -1,5 +1,5 @@
 {
-  "name": "nosso-chat-privado",
+  "name": "private-chat",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
